@@ -1,5 +1,7 @@
 # pour-console
 
+[![npm version](https://badge.fury.io/js/pour-console.svg)](https://badge.fury.io/js/pour-console)
+
 A simplified promise-based `spawn`, with real-time logging to console.
 
 ## Usage
