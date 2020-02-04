@@ -1,8 +1,7 @@
-/**
- * Currently this fails to send control keys. Might need to have a look at pty.js
- */
 const { pour } = require('../lib');
 
 (async () => {
-  await pour('nano')
+  await pour('git add .')
+  await pour('git commit', { stdio: 'inherit' })
+  await pour('git push origin master')
 })().catch(console.error)

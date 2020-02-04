@@ -14,7 +14,7 @@ import { split, quote } from 'shlex'
  * @param options SpawnOptions
  */
 export function pour (
-  cmd: string | string[], options?: SpawnOptionsWithoutStdio
+  cmd: string | string[], options?: SpawnOptionsWithoutStdio & { isTty?: boolean }
 ): Promise<void> & { process: ChildProcessWithoutNullStreams } {
   let a0 = ''
   let args = []
@@ -32,11 +32,20 @@ export function pour (
   const p = spawn(a0, args, options)
 
   return new PourPromise((resolve, reject) => {
-    process.stdin.pipe(p.stdin)
-    p.stdout.pipe(process.stdout)
-    p.stderr.pipe(process.stderr)
-    // p.stdout.on('data', d => logTo(process.stdout, d))
-    // p.stderr.on('data', d => logTo(process.stderr, '\x1b[31m', 'Error: ', '\x1b[0m', d))
+    // @ts-ignore
+    if (options && options.stdio === 'inherit') {
+      // ['exit', 'SIGINT', 'SIGUSR1', 'SIGUSR2', 'uncaughtException', 'SIGTERM'].forEach((eventType) => {
+      //   process.on(eventType as any, () => {
+      //     console.clear()
+      //     process.exit()
+      //   });
+      // })
+    } else {
+      process.stdin.pipe(p.stdin)
+      p.stdout.pipe(process.stdout)
+      p.stderr.pipe(process.stderr)
+    }
+
     p.on('error', reject)
     p.on('close', code => code !== 0 ? reject(`Non-zero exit code: ${code}`) : resolve())
   }, p)
