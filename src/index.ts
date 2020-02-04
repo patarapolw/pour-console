@@ -34,18 +34,12 @@ export function pour (
   return new PourPromise((resolve, reject) => {
     // @ts-ignore
     if (options && options.stdio === 'inherit') {
-      // ['exit', 'SIGINT', 'SIGUSR1', 'SIGUSR2', 'uncaughtException', 'SIGTERM'].forEach((eventType) => {
-      //   process.on(eventType as any, () => {
-      //     console.clear()
-      //     process.exit()
-      //   });
-      // })
+      
     } else {
       process.stdin.pipe(p.stdin)
-      p.stdout.pipe(process.stdout)
-      p.stderr.pipe(process.stderr)
+      p.stdout.on('data', d => logTo(process.stdout, d))
+      p.stderr.on('data', d => logTo(process.stderr, d))
     }
-
     p.on('error', reject)
     p.on('close', code => code !== 0 ? reject(`Non-zero exit code: ${code}`) : resolve())
   }, p)
