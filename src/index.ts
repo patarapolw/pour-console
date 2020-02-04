@@ -1,5 +1,4 @@
 import { spawn, SpawnOptionsWithoutStdio, ChildProcessWithoutNullStreams } from 'child_process'
-
 import { split, quote } from 'shlex'
 
 /**
@@ -33,10 +32,11 @@ export function pour (
   const p = spawn(a0, args, options)
 
   return new PourPromise((resolve, reject) => {
-    p.stdin.pipe(process.stdin)
+    process.stdin.pipe(p.stdin)
     p.stdout.pipe(process.stdout)
-    p.stdout.on('data', d => logTo(process.stdout, d))
-    p.stderr.on('data', d => logTo(process.stderr, '\x1b[31m', 'Error: ', '\x1b[0m', d))
+    p.stderr.pipe(process.stderr)
+    // p.stdout.on('data', d => logTo(process.stdout, d))
+    // p.stderr.on('data', d => logTo(process.stderr, '\x1b[31m', 'Error: ', '\x1b[0m', d))
     p.on('error', reject)
     p.on('close', code => code !== 0 ? reject(`Non-zero exit code: ${code}`) : resolve())
   }, p)

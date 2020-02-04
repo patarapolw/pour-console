@@ -1,6 +1,5 @@
 const { pour } = require('../lib');
 
 (async () => {
-  await pour('git add .')
-  await pour('git commit')
+  await pour('read input_variable')
 })().catch(console.error)
