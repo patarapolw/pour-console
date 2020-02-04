@@ -11,7 +11,7 @@ const { pour } = require('pour-console');
 
 (async () => {
   await pour('git switch "non-existent branch"')
-  await pour('echo "does not reach here"')
+  await pour('echo "does not reach here"')  // Will not reach here.
 })().catch(console.error)
 ```
 
