@@ -20,7 +20,7 @@ const { pour } = require('pour-console');
 This project uses [shlex](https://github.com/rgov/node-shlex) to simplify command calling; however you can directly use it without `shlex` by
 
 ```js
-await Pour.pour([
+await pour([
   'git',
   'commit',
   '-m',
@@ -31,7 +31,7 @@ await Pour.pour([
 As this also inherits `spawn`, you can specify `cwd` by
 
 ```js
-await Pour.pour('git add .', {
+await pour('git add .', {
   cwd: './dist'
 })
 ```
