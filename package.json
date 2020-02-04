@@ -1,0 +1,22 @@
+{
+  "name": "pour-console",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": "https://github.com/patarapolw/pour-console.git",
+  "author": "Pacharapol Withayasakpunt <patarapolw@gmail.com> (https://polvcode.dev)",
+  "license": "MIT",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "prepack": "tsc"
+  },
+  "dependencies": {
+    "shlex": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^13.7.0"
+  }
+}
