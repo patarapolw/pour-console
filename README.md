@@ -10,11 +10,8 @@ A simplified promise-based `spawn`, with real-time logging to console.
 const { pour } = require('pour-console');
 
 (async () => {
-  await pour('git switch non-existing-branch')  // Will terminate at this line due to branch not existing.
-
-  await pour('git add .')
-  await pour('git commit -m update')
-  await pour('git push origin non-existing-branch')
+  await pour('git switch "non-existent branch"')
+  await pour('echo "does not reach here"')
 })().catch(console.error)
 ```
 

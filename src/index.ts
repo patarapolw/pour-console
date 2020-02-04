@@ -1,11 +1,26 @@
 import { spawn, SpawnOptionsWithoutStdio, ChildProcessWithoutNullStreams } from 'child_process'
+import { split } from 'shlex'
 
-export function pour (cmd: string | string[], options?: SpawnOptionsWithoutStdio) {
+/**
+ * ```js
+ * const { pour } = require('pour-console')
+ * const p = pour('git add .', { cwd: './dist' })
+ * // p.process => Original Process
+ * // p.then() => When it is resolved
+ * // p.catch() => When it is rejected
+ * ```
+ * 
+ * @param cmd Command line string, or array of strings
+ * @param options SpawnOptions
+ */
+export function pour (
+  cmd: string | string[], options?: SpawnOptionsWithoutStdio
+): Promise<void> & { process: ChildProcessWithoutNullStreams } {
   let a0 = ''
   let args = []
 
   if (typeof cmd === 'string') {
-    [a0, ...args] = require('shlex').split(cmd)
+    [a0, ...args] = split(cmd)
   } else {
     [a0, ...args] = cmd
   }
@@ -16,7 +31,7 @@ export function pour (cmd: string | string[], options?: SpawnOptionsWithoutStdio
 
   const p = spawn(a0, args, options)
 
-  const promise = new Promise((resolve, reject) => {
+  return new PourPromise((resolve, reject) => {
     p.stdin.pipe(process.stdin)
     p.stdout.on('data', d => console.log(d.toString().trimEnd()))
     p.stderr.on('data', d => console.error(
@@ -25,11 +40,17 @@ export function pour (cmd: string | string[], options?: SpawnOptionsWithoutStdio
     )
     p.on('error', reject)
     p.on('close', code => code !== 0 ? reject(`Non-zero exit code: ${code}`) : resolve())
-  }) as Promise<void>
+  }, p)
+}
 
-  Object.assign(promise, { process: p })
+class PourPromise extends Promise<void> {
+  process: ChildProcessWithoutNullStreams
 
-  return promise as Promise<void> & {
+  constructor(
+    executor: (resolve: (r?: any) => void, reject: (err?: any) => void) => void,
     process: ChildProcessWithoutNullStreams
+  ) {
+    super(executor)
+    this.process = process
   }
 }
