@@ -5,15 +5,15 @@ A simplified promise-based `spawn`, with real-time logging to console.
 ## Usage
 
 ```js
-const { Pour } = require('pour-console');
+const { pour } = require('pour-console');
 
 (async () => {
-  await Pour.pour('git switch non-existing-branch')  // Will terminate at this line due to branch not existing.
+  await pour('git switch non-existing-branch')  // Will terminate at this line due to branch not existing.
 
-  await Pour.pour('git add .')
-  await Pour.pour('git commit -m update')
-  await Pour.pour('git push origin non-existing-branch')
-})().catch(console.error);
+  await pour('git add .')
+  await pour('git commit -m update')
+  await pour('git push origin non-existing-branch')
+})().catch(console.error)
 ```
 
 ## Deviation from `spawn`
