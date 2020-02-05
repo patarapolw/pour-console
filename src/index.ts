@@ -37,13 +37,13 @@ export function pour (
       
     } else {
       process.stdin.pipe(p.stdin)
-      p.stdout.pipe(process.stdout)
-      p.stderr.pipe(process.stderr)
-      // p.stdout.on('data', d => console.log(d.toString().trimEnd()))
-      // p.stderr.on('data', d => console.error(
-      //   '\x1b[31m', 'Error:', '\x1b[0m',
-      //   d.toString().trimEnd()
-      // ))
+      // p.stdout.pipe(process.stdout)
+      // p.stderr.pipe(process.stderr)
+      p.stdout.on('data', d => console.log(d.toString().trimEnd()))
+      p.stderr.on('data', d => console.error(
+        '\x1b[31m', 'Error:', '\x1b[0m',
+        d.toString().trimEnd()
+      ))
     }
     // p.on('error', reject)
     // p.on('close', (code, sig) => {
