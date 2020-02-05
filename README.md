@@ -36,6 +36,16 @@ await pour('git add .', {
 })
 ```
 
+## Special apps and apps that need Ctrl key
+
+In this case, you'll need to use the good ol' `stdio: "inherit"`.
+
+```js
+await pour('nano file.txt', {
+  stdio: 'inherit'
+})
+```
+
 ## Installation
 
 ```sh
