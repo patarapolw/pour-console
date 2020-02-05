@@ -14,7 +14,7 @@ import { split, quote } from 'shlex'
  * @param options SpawnOptions
  */
 export function pour (
-  cmd: string | string[], options?: SpawnOptionsWithoutStdio & { isTty?: boolean }
+  cmd: string | string[], options?: SpawnOptionsWithoutStdio
 ): Promise<void> & { process: ChildProcessWithoutNullStreams } {
   let a0 = ''
   let args = []
@@ -25,9 +25,9 @@ export function pour (
     [a0, ...args] = cmd
   }
 
-  console.log('\x1B[2;37m', '$', [a0, ...args].map((el) => {
+  logTo(process.stdout, '\x1B[2;37m', '$', [a0, ...args].map((el) => {
     return quote(el)
-  }).join(' '), '\x1B[0m')
+  }).join(' '), '\x1B[0m', '\n')
 
   const p = spawn(a0, args, options)
 
@@ -37,20 +37,14 @@ export function pour (
       
     } else {
       process.stdin.pipe(p.stdin)
-      p.stdout.pipe(process.stdout)
-      p.stderr.pipe(process.stderr)
-      // p.stdout.on('data', d => console.log(d.toString().trimEnd()))
-      // p.stderr.on('data', d => console.error(
-      //   '\x1b[31m', 'Error:', '\x1b[0m',
-      //   d.toString().trimEnd()
-      // ))
+      // p.stdout.pipe(process.stdout)
+      // p.stderr.pipe(process.stderr)
+      p.stdout.on('data', d => logTo(process.stdout, d))
+      p.stderr.on('data', d => logTo(process.stderr, '\x1b[31m', 'error ', '\x1b[0m', d))
     }
     // p.on('error', reject)
-    // p.on('close', (code, sig) => {
-    //   code !== 0 ? reject(`${sig}: Non-zero exit code: ${code}`) : resolve()
-    // })
     p.on('exit', (code, sig) => {
-      code !== 0 ? reject(`${sig}: Non-zero exit code: ${code}`) : resolve()
+      code !== 0 ? reject(`${sig ? `${sig}: ` : ''}Non-zero exit code: ${code}`) : resolve()
     })
   }, p)
 }
@@ -67,6 +61,6 @@ class PourPromise extends Promise<void> {
   }
 }
 
-// function logTo (target: NodeJS.WriteStream, ...segs: any[]) {
-//   segs.forEach(s => target.write(s))
-// }
+function logTo (target: NodeJS.WriteStream, ...segs: any[]) {
+  segs.forEach(s => target.write(s))
+}
