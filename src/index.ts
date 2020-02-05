@@ -37,15 +37,20 @@ export function pour (
       
     } else {
       process.stdin.pipe(p.stdin)
-      p.stdout.on('data', d => console.log(d.toString().trimEnd()))
-      p.stderr.on('data', d => console.error(
-        '\x1b[31m', 'Error:', '\x1b[0m',
-        d.toString().trimEnd()
-      ))
+      p.stdout.pipe(process.stdout)
+      p.stderr.pipe(process.stderr)
+      // p.stdout.on('data', d => console.log(d.toString().trimEnd()))
+      // p.stderr.on('data', d => console.error(
+      //   '\x1b[31m', 'Error:', '\x1b[0m',
+      //   d.toString().trimEnd()
+      // ))
     }
-    p.on('error', reject)
-    p.on('close', code => {
-      code !== 0 ? reject(`Non-zero exit code: ${code}`) : resolve()
+    // p.on('error', reject)
+    // p.on('close', (code, sig) => {
+    //   code !== 0 ? reject(`${sig}: Non-zero exit code: ${code}`) : resolve()
+    // })
+    p.on('exit', (code, sig) => {
+      code !== 0 ? reject(`${sig}: Non-zero exit code: ${code}`) : resolve()
     })
   }, p)
 }
