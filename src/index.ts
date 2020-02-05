@@ -25,7 +25,7 @@ export function pour (
     [a0, ...args] = cmd
   }
 
-  logTo(process.stdout, '\x1B[2;37m', '$', [a0, ...args].map((el) => {
+  logTo(process.stdout, '\x1B[2;37m', '$ ', [a0, ...args].map((el) => {
     return quote(el)
   }).join(' '), '\x1B[0m', '\n')
 
