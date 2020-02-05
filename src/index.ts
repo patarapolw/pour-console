@@ -25,9 +25,9 @@ export function pour (
     [a0, ...args] = cmd
   }
 
-  logTo(process.stdout, '\x1B[2;37m', '$ ', [a0, ...args].map((el) => {
+  console.log('\x1B[2;37m', '$', [a0, ...args].map((el) => {
     return quote(el)
-  }).join(' '), '\x1B[0m', '\n')
+  }).join(' '), '\x1B[0m')
 
   const p = spawn(a0, args, options)
 
@@ -37,11 +37,16 @@ export function pour (
       
     } else {
       process.stdin.pipe(p.stdin)
-      p.stdout.on('data', d => logTo(process.stdout, d))
-      p.stderr.on('data', d => logTo(process.stderr, d))
+      p.stdout.on('data', d => console.log(d.toString().trimEnd()))
+      p.stderr.on('data', d => console.error(
+        '\x1b[31m', 'Error:', '\x1b[0m',
+        d.toString().trimEnd()
+      ))
     }
     p.on('error', reject)
-    p.on('close', code => code !== 0 ? reject(`Non-zero exit code: ${code}`) : resolve())
+    p.on('close', code => {
+      code !== 0 ? reject(`Non-zero exit code: ${code}`) : resolve()
+    })
   }, p)
 }
 
@@ -57,6 +62,6 @@ class PourPromise extends Promise<void> {
   }
 }
 
-function logTo (target: NodeJS.WriteStream, ...segs: any[]) {
-  segs.forEach(s => target.write(s))
-}
+// function logTo (target: NodeJS.WriteStream, ...segs: any[]) {
+//   segs.forEach(s => target.write(s))
+// }
