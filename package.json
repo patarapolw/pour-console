@@ -15,7 +15,7 @@
     "test": "node tests/input.spec.js"
   },
   "dependencies": {
-    "shlex": "^2.0.1"
+    "shlex": "^2.0.2"
   },
   "devDependencies": {
     "@types/node": "^13.7.0"
